@@ -23,21 +23,6 @@ class AlbumsService {
     return result.rows[0].id;
   }
 
-  async getAlbum(albumId) {
-    const query = {
-      text: 'SELECT * FROM albums WHERE id = $1',
-      values: [albumId],
-    };
-
-    const result = await this._pool.query(query);
-
-    if (result.rows.length === 0) {
-      throw new NotFoundError(`Album dengan id ${albumId} tidak ditemukan`);
-    }
-
-    return new GetAlbumModel(result.rows[0]).getSelectModel();
-  }
-
   async checkAlbumIsExist(albumId) {
     const query = {
       text: 'SELECT id FROM albums WHERE id = $1',
@@ -49,6 +34,19 @@ class AlbumsService {
     if (result.rows.length === 0) {
       throw new NotFoundError(`Album dengan id ${albumId} tidak ditemukan`);
     }
+  }
+
+  async getAlbumById(albumId) {
+    await this.checkAlbumIsExist(albumId);
+
+    const query = {
+      text: 'SELECT * FROM albums WHERE id = $1',
+      values: [albumId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return new GetAlbumModel(result.rows[0]).getSelectModel();
   }
 
   async editAlbumById(albumId, payload) {

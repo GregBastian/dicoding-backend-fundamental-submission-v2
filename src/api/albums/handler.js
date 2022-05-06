@@ -22,7 +22,7 @@ class AlbumsHandler {
 
   async getAlbumHandler(request, h) {
     const { id: albumId } = request.params;
-    const albumDetails = await this._albumsService.getAlbum(albumId);
+    const albumDetails = await this._albumsService.getAlbumById(albumId);
 
     return successResponse(h, {
       responseData: { album: albumDetails },
