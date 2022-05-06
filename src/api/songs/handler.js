@@ -20,8 +20,16 @@ class SongsHandler {
     });
   }
 
-  async getAllSongsHandler(_, h) {
-    const songs = await this._songsService.getAllSongs();
+  async getAllSongsHandler(request, h) {
+    let songs = await this._songsService.getAllSongs();
+
+    const { title, performer } = request.query;
+
+    if(title){
+      songs = songs.filter(song => song.title.toLowerCase().includes(title.toLowerCase())); 
+    }if (performer){
+      songs = songs.filter(song => song.performer.toLowerCase().includes(performer.toLowerCase()));
+    }
 
     return successResponse(h, {
       responseData: { songs },
