@@ -29,6 +29,17 @@ class AlbumsHandler {
       responseCode: 200,
     });
   }
+
+  async putAlbumHandler(request, h){
+    this._validator.validatePostAlbumPayload(request.payload);
+
+    const { id: albumId } = request.params;
+    await this._albumsService.editAlbumById(albumId, request.payload);
+
+    return successResponse(h, {
+      responseMessage: `data album dengan id ${albumId} berhasil diperbarui`,      
+    })
+  }
 }
 
 module.exports = AlbumsHandler;
