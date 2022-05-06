@@ -38,31 +38,46 @@ class AlbumsService {
     return new GetAlbumModel(result.rows[0]).getSelectModel();
   }
 
-  async checkAlbumIsExist(albumId){
-      const query = {
-          text: 'SELECT id FROM albums WHERE id = $1',
-          values: [albumId]
-      }
+  async checkAlbumIsExist(albumId) {
+    const query = {
+      text: 'SELECT id FROM albums WHERE id = $1',
+      values: [albumId],
+    };
 
     const result = await this._pool.query(query);
 
     if (result.rows.length === 0) {
-        throw new NotFoundError(`Album dengan id ${albumId} tidak ditemukan`);
-      }
+      throw new NotFoundError(`Album dengan id ${albumId} tidak ditemukan`);
+    }
   }
 
-  async editAlbumById(albumId, payload){
-      await this.checkAlbumIsExist(albumId);
+  async editAlbumById(albumId, payload) {
+    await this.checkAlbumIsExist(albumId);
 
-      const query = {
-        text: 'UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id',
-        values: new PutAlbumModel(payload, albumId).getUpdateModel(),
-    }
+    const query = {
+      text: 'UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id',
+      values: new PutAlbumModel(payload, albumId).getUpdateModel(),
+    };
 
     const result = await this._pool.query(query);
 
     if (!result.rows[0].id) {
-        throw new InvariantError('Album gagal ditambahkan');
+      throw new InvariantError(`Data album dengan id ${albumId} gagal diperbarui`);
+    }
+  }
+
+  async deleteAlbumById(albumId) {
+    await this.checkAlbumIsExist(albumId);
+
+    const query = {
+      text: 'DELETE FROM albums WHERE id = $1 RETURNING id',
+      values: [albumId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows[0].id) {
+        throw new InvariantError(`Data album dengan id ${albumId} gagal dihapus`);
       }
   }
 }
