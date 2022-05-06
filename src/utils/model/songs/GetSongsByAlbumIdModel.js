@@ -1,0 +1,15 @@
+class GetSongsByAlbumIdModel {
+  constructor({ rows }) {
+    this.songs = rows;
+  }
+
+  getSelectAllModel() {
+    return this.songs.map((song) => ({
+      id: song.id,
+      title: song.title,
+      performer: song.performer,
+    }));
+  }
+}
+
+module.exports = GetSongsByAlbumIdModel;

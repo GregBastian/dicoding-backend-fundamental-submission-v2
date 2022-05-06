@@ -1,5 +1,7 @@
 class GetAllSongsModel {
-  constructor({ id, title, year, genre, performer, duration, album_id: albumId }) {
+  constructor({
+    id, title, year, genre, performer, duration, album_id: albumId,
+  }) {
     this.id = id;
     this.title = title;
     this.year = year;

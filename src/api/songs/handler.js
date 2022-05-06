@@ -1,4 +1,3 @@
-const { payload } = require('@hapi/hapi/lib/validation');
 const autoBind = require('auto-bind');
 const { successResponse } = require('../../utils/responses');
 
@@ -38,24 +37,24 @@ class SongsHandler {
     });
   }
 
-  async putSongHandler(request, h){
+  async putSongHandler(request, h) {
     this._validator.validatePutSongPayload(request.payload);
 
     const { id: songId } = request.params;
     await this._songsService.editSongById(songId, request.payload);
 
     return successResponse(h, {
-      responseMessage: `Data song dengan id ${songId} berhasil diperbarui`
-    })
+      responseMessage: `Data song dengan id ${songId} berhasil diperbarui`,
+    });
   }
 
-  async deleteSongHandler(request, h){
+  async deleteSongHandler(request, h) {
     const { id: songId } = request.params;
     await this._songsService.deleteSongById(songId, request.payload);
 
     return successResponse(h, {
-      responseMessage: `Data song dengan id ${songId} berhasil dihapus`
-    })
+      responseMessage: `Data song dengan id ${songId} berhasil dihapus`,
+    });
   }
 }
 

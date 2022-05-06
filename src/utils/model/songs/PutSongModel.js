@@ -13,8 +13,8 @@ class PutSongModel {
 
   getUpdateModel() {
     return [this.title, this.year, this.genre,
-      this.performer, this.duration, this.albumId
-    , this.id];
+      this.performer, this.duration, this.albumId,
+      this.id];
   }
 }
 

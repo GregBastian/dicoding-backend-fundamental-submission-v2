@@ -1,7 +1,9 @@
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const { PostSongModel, GetAllSongsModel, GetSongModel, PutSongModel } = require('../../utils/model/songs');
+const {
+  PostSongModel, GetAllSongsModel, GetSongModel, PutSongModel, GetSongsByAlbumIdModel,
+} = require('../../utils/model/songs');
 
 class SongsService {
   constructor() {
@@ -85,6 +87,17 @@ class SongsService {
     if (!result.rows[0].id) {
       throw new InvariantError(`Data song dengan id ${songId} gagal dihapus`);
     }
+  }
+
+  async getSongByAlbumId(albumId) {
+    const query = {
+      text: 'SELECT id, title, performer FROM songs WHERE album_id = $1',
+      values: [albumId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return new GetSongsByAlbumIdModel(result).getSelectAllModel();
   }
 }
 
