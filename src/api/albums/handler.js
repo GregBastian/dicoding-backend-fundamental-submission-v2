@@ -41,7 +41,7 @@ class AlbumsHandler {
     });
   }
 
-  async deleteAlbumHandler(request, h){
+  async deleteAlbumHandler(request, h) {
     const { id: albumId } = request.params;
     await this._albumsService.deleteAlbumById(albumId);
 
