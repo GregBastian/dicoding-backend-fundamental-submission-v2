@@ -1,5 +1,5 @@
 class PutAlbumModel {
-  constructor({ name, year }, albumId) {
+  constructor(albumId, { name, year }) {
     this.id = albumId;
     this.name = name;
     this.year = year;

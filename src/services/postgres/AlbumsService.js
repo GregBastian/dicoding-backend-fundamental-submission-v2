@@ -54,7 +54,7 @@ class AlbumsService {
 
     const query = {
       text: 'UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id',
-      values: new PutAlbumModel(payload, albumId).getUpdateModel(),
+      values: new PutAlbumModel(albumId, payload).getUpdateModel(),
     };
 
     const result = await this._pool.query(query);

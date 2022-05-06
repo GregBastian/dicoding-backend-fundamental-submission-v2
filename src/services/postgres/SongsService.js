@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const { PostSongModel, GetAllSongsModel, GetSongModel } = require('../../utils/model/songs');
+const { PostSongModel, GetAllSongsModel, GetSongModel, PutSongModel } = require('../../utils/model/songs');
 
 class SongsService {
   constructor() {
@@ -57,48 +57,35 @@ class SongsService {
     return new GetSongModel(result.rows[0]).getSelectModel();
   }
 
-  // async checkAlbumIsExist(albumId) {
-  //   const query = {
-  //     text: 'SELECT id FROM albums WHERE id = $1',
-  //     values: [albumId],
-  //   };
+  async editSongById(songId, payload) {
+    await this.checkSongIsExist(songId);
 
-  //   const result = await this._pool.query(query);
+    const query = {
+      text: `UPDATE songs SET title = $1, year = $2, genre = $3, performer = $4, 
+      duration = $5, album_id = $6 WHERE id = $7 RETURNING id`,
+      values: new PutSongModel(songId, payload).getUpdateModel(),
+    };
+    const result = await this._pool.query(query);
 
-  //   if (result.rows.length === 0) {
-  //     throw new NotFoundError(`Album dengan id ${albumId} tidak ditemukan`);
-  //   }
-  // }
+    if (!result.rows[0].id) {
+      throw new InvariantError(`Data song dengan id ${songId} gagal diperbarui`);
+    }
+  }
 
-  // async editAlbumById(albumId, payload) {
-  //   await this.checkAlbumIsExist(albumId);
+  async deleteSongById(songId) {
+    await this.checkSongIsExist(songId);
 
-  //   const query = {
-  //     text: 'UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id',
-  //     values: new PutAlbumModel(payload, albumId).getUpdateModel(),
-  //   };
+    const query = {
+      text: 'DELETE FROM songs WHERE id = $1 RETURNING id',
+      values: [songId],
+    };
 
-  //   const result = await this._pool.query(query);
+    const result = await this._pool.query(query);
 
-  //   if (!result.rows[0].id) {
-  //     throw new InvariantError(`Data album dengan id ${albumId} gagal diperbarui`);
-  //   }
-  // }
-
-  // async deleteAlbumById(albumId) {
-  //   await this.checkAlbumIsExist(albumId);
-
-  //   const query = {
-  //     text: 'DELETE FROM albums WHERE id = $1 RETURNING id',
-  //     values: [albumId],
-  //   };
-
-  //   const result = await this._pool.query(query);
-
-  //   if (!result.rows[0].id) {
-  //     throw new InvariantError(`Data album dengan id ${albumId} gagal dihapus`);
-  //   }
-  // }
+    if (!result.rows[0].id) {
+      throw new InvariantError(`Data song dengan id ${songId} gagal dihapus`);
+    }
+  }
 }
 
 module.exports = SongsService;

@@ -26,7 +26,6 @@ class AlbumsHandler {
 
     return successResponse(h, {
       responseData: { album: albumDetails },
-      responseCode: 200,
     });
   }
 
@@ -37,7 +36,7 @@ class AlbumsHandler {
     await this._albumsService.editAlbumById(albumId, request.payload);
 
     return successResponse(h, {
-      responseMessage: `data album dengan id ${albumId} berhasil diperbarui`,
+      responseMessage: `Data album dengan id ${albumId} berhasil diperbarui`,
     });
   }
 
@@ -46,7 +45,7 @@ class AlbumsHandler {
     await this._albumsService.deleteAlbumById(albumId);
 
     return successResponse(h, {
-      responseMessage: `data album dengan id ${albumId} berhasil dihapus`,
+      responseMessage: `Data album dengan id ${albumId} berhasil dihapus`,
     });
   }
 }

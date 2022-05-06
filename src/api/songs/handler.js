@@ -1,3 +1,4 @@
+const { payload } = require('@hapi/hapi/lib/validation');
 const autoBind = require('auto-bind');
 const { successResponse } = require('../../utils/responses');
 
@@ -25,39 +26,37 @@ class SongsHandler {
 
     return successResponse(h, {
       responseData: { songs },
-      responseCode: 200,
     });
   }
 
-  async getSongByIdHandler(request, h) {
+  async getSongHandler(request, h) {
     const { id: songId } = request.params;
     const songDetails = await this._songsService.getSongById(songId);
 
     return successResponse(h, {
       responseData: { song: songDetails },
-      responseCode: 200,
     });
   }
 
-  // async putAlbumHandler(request, h) {
-  //   this._validator.validatePutAlbumPayload(request.payload);
+  async putSongHandler(request, h){
+    this._validator.validatePutSongPayload(request.payload);
 
-  //   const { id: albumId } = request.params;
-  //   await this._albumsService.editAlbumById(albumId, request.payload);
+    const { id: songId } = request.params;
+    await this._songsService.editSongById(songId, request.payload);
 
-  //   return successResponse(h, {
-  //     responseMessage: `data album dengan id ${albumId} berhasil diperbarui`,
-  //   });
-  // }
+    return successResponse(h, {
+      responseMessage: `Data song dengan id ${songId} berhasil diperbarui`
+    })
+  }
 
-  // async deleteAlbumHandler(request, h) {
-  //   const { id: albumId } = request.params;
-  //   await this._albumsService.deleteAlbumById(albumId);
+  async deleteSongHandler(request, h){
+    const { id: songId } = request.params;
+    await this._songsService.deleteSongById(songId, request.payload);
 
-  //   return successResponse(h, {
-  //     responseMessage: `data album dengan id ${albumId} berhasil dihapus`,
-  //   });
-  // }
+    return successResponse(h, {
+      responseMessage: `Data song dengan id ${songId} berhasil dihapus`
+    })
+  }
 }
 
 module.exports = SongsHandler;
