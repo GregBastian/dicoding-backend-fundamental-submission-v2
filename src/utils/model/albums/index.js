@@ -1,4 +1,5 @@
-const AlbumGetModel = require('./AlbumPostModel');
-const AlbumPostModel = require('./AlbumGetModel');
+const AlbumPostModel = require('./AlbumPostModel');
+const AlbumGetModel = require('./AlbumGetModel');
+const AlbumPutModel = require('./AlbumPutModel');
 
-module.exports = { AlbumGetModel, AlbumPostModel };
+module.exports = { AlbumPostModel, AlbumGetModel, AlbumPutModel };

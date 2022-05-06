@@ -11,10 +11,8 @@ const songHandler = require('./api/albums');
 const AlbumsService = require('./services/postgres/AlbumsService');
 const AlbumsValidator = require('./validator/albums');
 
-
 /* Instantiaton of Postgres Services */
 const albumsService = new AlbumsService();
-
 
 const init = async () => {
   const server = Hapi.server({
@@ -31,7 +29,7 @@ const init = async () => {
     plugin: songHandler,
     options: {
       AlbumsService: albumsService,
-      validator:  AlbumsValidator,
+      validator: AlbumsValidator,
     },
   });
 

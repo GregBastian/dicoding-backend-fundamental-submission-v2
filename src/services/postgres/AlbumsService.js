@@ -1,15 +1,15 @@
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const {  AlbumGetModel } = require('../../utils/model/albums');
+const { AlbumPostModel, AlbumGetModel } = require('../../utils/model/albums');
 
 class AlbumsService {
   constructor() {
     this._pool = new Pool();
   }
 
-  async addAlbum(request) {
-    const newAlbum = new AlbumGetModel(request);
+  async addAlbum(payload) {
+    const newAlbum = new AlbumPostModel(payload);
 
     const query = {
       text: 'INSERT INTO albums VALUES($1, $2, $3) RETURNING id',
@@ -25,74 +25,19 @@ class AlbumsService {
     return result.rows[0].id;
   }
 
-  async addSong(payload) {
-    const newSong = new SongModel(payload);
+  async getAlbum(albumId) {
     const query = {
-      text: 'INSERT INTO songs VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
-      values: newSong.instanceToArray4NewEntry(newSong),
+      text: 'SELECT * FROM albums WHERE id = $1',
+      values: [albumId],
     };
 
     const result = await this._pool.query(query);
 
-    if (!result.rows[0].id) {
-      throw new InvariantError('Lagu gagal ditambahkan');
+    if (result.rows.length === 0) {
+      throw new NotFoundError(`Album dengan id ${albumId} tidak ditemukan`);
     }
 
-    return result.rows[0].id;
-  }
-
-  async getSongs() {
-    const result = await this._pool.query('SELECT id, title, performer FROM songs');
-    return result.rows;
-  }
-
-  async getSongById(id) {
-    const query = {
-      text: 'SELECT * FROM songs WHERE id = $1',
-      values: [id],
-    };
-    const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
-      throw new NotFoundError('Lagu yang Anda cari tidak ditemukan');
-    }
-
-    return result.rows.map(MapDBToModel4singleSong)[0];
-  }
-
-  async editSongById(id, payload) {
-    const newSongData = SongModel.instance4ExistingEntry(id, payload);
-    const query = {
-      text: 'UPDATE songs SET title = $1, year = $2, performer = $3, genre = $4, duration = $5, updated_at = $6 WHERE id = $7 RETURNING id',
-      values: newSongData.instanceToArray4ExistingEntry(),
-    };
-
-    const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
-      throw new NotFoundError('Gagal memperbarui Lagu. Id tidak ditemukan');
-    }
-  }
-
-  async deleteSongById(id) {
-    const query = {
-      text: 'DELETE FROM songs WHERE id = $1 RETURNING id',
-      values: [id],
-    };
-
-    const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
-      throw new NotFoundError('Lagu gagal dihapus. Id tidak ditemukan');
-    }
-  }
-
-  async truncateTable() {
-    try {
-      await this._pool.query('TRUNCATE TABLE songs');
-    } catch (error) {
-      throw new Error('Terdapat kesalahan pada sistem');
-    }
+    return new AlbumGetModel(result.rows[0]).getSelectModel();
   }
 }
 
